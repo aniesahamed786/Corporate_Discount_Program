@@ -72,7 +72,7 @@ let AdminService = class AdminService {
                         admin: { id: AdminId }
                     });
                     await manager.save(vendor);
-                    await manager.update(request_entity_1.Request, request_id, { vendor: { id: vendor.id }, });
+                    await manager.update(request_entity_1.Request, request_id, { vendor: { id: vendor.id, status: vendor.status }, });
                     break;
                 }
             }
