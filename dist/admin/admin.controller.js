@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const admin_service_1 = require("./admin.service");
 const create_admin_dto_1 = require("./dto/create-admin.dto");
 const update_admin_dto_1 = require("./dto/update-admin.dto");
+const rejectApprove_dto_1 = require("./dto/rejectApprove.dto");
 let AdminController = class AdminController {
     adminService;
     constructor(adminService) {
@@ -36,6 +37,9 @@ let AdminController = class AdminController {
     }
     approve(id, updateAdminDto) {
         return this.adminService.approveRequest(id, updateAdminDto.adminId);
+    }
+    reject(id, RejectApproveDto) {
+        return this.adminService.rejectRequest(id, RejectApproveDto.adminId, RejectApproveDto.comment);
     }
     findOne(id) {
         return this.adminService.getVendorById(id);
@@ -82,6 +86,14 @@ __decorate([
     __metadata("design:paramtypes", [Number, update_admin_dto_1.UpdateAdminDto]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "approve", null);
+__decorate([
+    (0, common_1.Patch)(':id/reject'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, rejectApprove_dto_1.RejectApproveDto]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "reject", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

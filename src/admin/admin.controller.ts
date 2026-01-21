@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { RejectApproveDto } from './dto/rejectApprove.dto'
 
 @Controller('admin')
 export class AdminController {
@@ -28,6 +29,11 @@ export class AdminController {
    @Patch(':id/approve')
   approve(@Param('id') id: number, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminService.approveRequest(id, updateAdminDto.adminId);
+
+  }
+   @Patch(':id/reject')
+  reject(@Param('id') id: number, @Body() RejectApproveDto: RejectApproveDto ) {
+    return this.adminService.rejectRequest(id,  RejectApproveDto.adminId,RejectApproveDto.comment);
 
   }
 

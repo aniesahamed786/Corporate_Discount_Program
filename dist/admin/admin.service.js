@@ -1,10 +1,43 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -19,20 +52,44 @@ const typeorm_2 = require("@nestjs/typeorm");
 const request_entity_1 = require("../vendor/entities/request.entity");
 const enum_1 = require("../Common/enum");
 const vendor_entity_1 = require("../vendor/entities/vendor.entity");
+const vendor_profile_entity_1 = require("../vendor/entities/vendor-profile.entity");
+const vendor_credentials_entity_1 = require("../vendor/entities/vendor-credentials.entity");
+const category_entity_1 = require("../vendor/entities/category.entity");
+const sub_category_entity_1 = require("../vendor/entities/sub-category.entity");
+const vendor_created_offer_entity_1 = require("../vendor/entities/vendor-created-offer.entity");
+const request_history_entity_1 = require("../vendor/entities/request-history.entity");
+const crypto = __importStar(require("crypto"));
 let AdminService = class AdminService {
     datasource;
     requestRepo;
     vendorRepo;
-    constructor(datasource, requestRepo, vendorRepo) {
+    vendorProfileRepo;
+    vendorCredentialsRepo;
+    vendorCreatedOfferRepo;
+    categoryRepo;
+    subCategoryRepo;
+    constructor(datasource, requestRepo, vendorRepo, vendorProfileRepo, vendorCredentialsRepo, vendorCreatedOfferRepo, categoryRepo, subCategoryRepo) {
         this.datasource = datasource;
         this.requestRepo = requestRepo;
         this.vendorRepo = vendorRepo;
+        this.vendorProfileRepo = vendorProfileRepo;
+        this.vendorCredentialsRepo = vendorCredentialsRepo;
+        this.vendorCreatedOfferRepo = vendorCreatedOfferRepo;
+        this.categoryRepo = categoryRepo;
+        this.subCategoryRepo = subCategoryRepo;
     }
     async getAllRequests() {
         return await this.requestRepo.find({
             relations: ['vendor'],
             order: { created_at: 'DESC' },
         });
+    }
+    generateSecurePassword(length = 12) {
+        return crypto.randomBytes(length).toString('base64').slice(0, length);
+    }
+    generateRandomUsername(prefix) {
+        const random = crypto.randomBytes(3).toString('hex');
+        return `${prefix.toLowerCase()}_${random}`;
     }
     async getRequestsByVendor(vendorId) {
         return await this.requestRepo.find({
@@ -72,10 +129,96 @@ let AdminService = class AdminService {
                         admin: { id: AdminId }
                     });
                     await manager.save(vendor);
-                    await manager.update(request_entity_1.Request, request_id, { vendor: { id: vendor.id, status: vendor.status }, });
+                    await manager.update(request_entity_1.Request, request_id, { vendor: { id: vendor.id, status: enum_1.VendorRegistrationStatus.APPROVED }, });
+                    const credentialsRepo = manager.getRepository(vendor_credentials_entity_1.VendorCredentials);
+                    const updateVendorCredentials = credentialsRepo.create({
+                        vendor: { id: vendor.id },
+                        username: this.generateRandomUsername('vendor'),
+                        password_hash: this.generateSecurePassword(),
+                    });
+                    await credentialsRepo.save(updateVendorCredentials);
+                    break;
+                }
+                case 'vendor_update': {
+                    await manager.update(vendor_entity_1.Vendor, request.target_id, {
+                        ...payload,
+                        status: 'approved',
+                    });
+                    break;
+                }
+                case 'profile_create': {
+                    const profile = this.vendorProfileRepo.create({
+                        vendor: { id: request.vendor?.id },
+                        profile_image_url: payload.profile_image_url,
+                        dob: payload.dob,
+                    });
+                    await manager.save(profile);
+                    break;
+                }
+                case 'profile_update': {
+                    await manager.update(vendor_profile_entity_1.VendorProfile, request.target_id, {
+                        ...payload,
+                    });
+                    break;
+                }
+                case 'offer_create': {
+                    const offer = this.vendorCreatedOfferRepo.create({
+                        vendor: { id: request.vendor?.id },
+                        title: payload.title,
+                        short_description: payload.short_description,
+                        start_date: payload.start_date,
+                        end_date: payload.end_date,
+                        status: enum_1.VendorOfferCreationStatus.APPROVED,
+                    });
+                    await manager.save(offer);
+                    break;
+                }
+                case 'offer_update': {
+                    await manager.update(vendor_created_offer_entity_1.VendorCreatedOffer, request.target_id, {
+                        ...payload,
+                        timestamp: new Date(),
+                    });
+                    break;
+                }
+                case 'offer_delete': {
+                    await manager.delete(vendor_created_offer_entity_1.VendorCreatedOffer, request.target_id);
                     break;
                 }
             }
+            await manager.update(request_entity_1.Request, request_id, {
+                status: enum_1.RequestStatusEnum.APPROVED,
+                updated_at: new Date(),
+            });
+            await manager.save(request_history_entity_1.RequestHistory, {
+                request: { request_id: request_id },
+                admin: { id: AdminId },
+                action: enum_1.RequestStatusEnum.APPROVED,
+                comment: request.admin_comment,
+            });
+            return { message: 'Request approved successfully' };
+        });
+    }
+    async rejectRequest(request_id, AdminId, adminComment) {
+        const request = await this.requestRepo.findOne({
+            where: { request_id },
+            relations: ['vendor'],
+        });
+        if (!request) {
+            throw new common_1.NotFoundException('Request id not found' + `${request_id}`);
+        }
+        return await this.datasource.transaction(async (manager) => {
+            await manager.update(request_entity_1.Request, request_id, {
+                status: enum_1.RequestStatusEnum.REJECTED,
+                admin_comment: adminComment,
+                updated_at: new Date(),
+            });
+            await manager.save(request_history_entity_1.RequestHistory, {
+                request: { request_id },
+                admin: { id: AdminId },
+                action: enum_1.RequestStatusEnum.REJECTED,
+                admin_comment: adminComment || null,
+            });
+            return { message: 'Request rejected successfully' };
         });
     }
     create(createAdminDto) {
@@ -122,7 +265,17 @@ exports.AdminService = AdminService = __decorate([
     __param(0, (0, typeorm_2.InjectDataSource)()),
     __param(1, (0, typeorm_2.InjectRepository)(request_entity_1.Request)),
     __param(2, (0, typeorm_2.InjectRepository)(vendor_entity_1.Vendor)),
+    __param(3, (0, typeorm_2.InjectRepository)(vendor_profile_entity_1.VendorProfile)),
+    __param(4, (0, typeorm_2.InjectRepository)(vendor_credentials_entity_1.VendorCredentials)),
+    __param(5, (0, typeorm_2.InjectRepository)(vendor_created_offer_entity_1.VendorCreatedOffer)),
+    __param(6, (0, typeorm_2.InjectRepository)(category_entity_1.Category)),
+    __param(7, (0, typeorm_2.InjectRepository)(sub_category_entity_1.SubCategory)),
     __metadata("design:paramtypes", [typeorm_1.DataSource,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
         typeorm_1.Repository,
         typeorm_1.Repository])
 ], AdminService);

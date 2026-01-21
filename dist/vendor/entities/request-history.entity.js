@@ -29,10 +29,12 @@ __decorate([
 ], RequestHistory.prototype, "history_id", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => request_entity_1.Request, { onDelete: 'CASCADE' }),
+    (0, typeorm_1.JoinColumn)({ name: 'request_id' }),
     __metadata("design:type", request_entity_1.Request)
 ], RequestHistory.prototype, "request", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => admin_entity_1.Admin, { onDelete: 'SET NULL' }),
+    (0, typeorm_1.JoinColumn)({ name: 'admin_id' }),
     __metadata("design:type", admin_entity_1.Admin)
 ], RequestHistory.prototype, "admin", void 0);
 __decorate([
