@@ -12,14 +12,29 @@ export class AdminController {
     return this.adminService.create(createAdminDto);
   }
 
+   @Post('/ReviewRequest')
+  ReviewRequest(@Body() createAdminDto: CreateAdminDto) {
+    return this.adminService.create(createAdminDto);
+  }
+
   @Get()
   findAll() {
     return this.adminService.GetVendorList()
   }
+  @Get('requestList')
+  getAllRequests() {
+    return this.adminService.getAllRequests()
+  }
+   @Patch(':id/approve')
+  approve(@Param('id') id: number, @Body() updateAdminDto: UpdateAdminDto) {
+    return this.adminService.approveRequest(id, updateAdminDto.adminId);
+
+  }
+
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.adminService.getVendorById(id);
   }
 
   @Patch(':id')

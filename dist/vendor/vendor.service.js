@@ -16,10 +16,32 @@ exports.VendorService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
+const vendor_entity_1 = require("./entities/vendor.entity");
+const vendor_profile_entity_1 = require("./entities/vendor-profile.entity");
+const vendor_credentials_entity_1 = require("./entities/vendor-credentials.entity");
+const vendor_created_offer_entity_1 = require("./entities/vendor-created-offer.entity");
+const category_entity_1 = require("./entities/category.entity");
+const sub_category_entity_1 = require("./entities/sub-category.entity");
+const request_entity_1 = require("./entities/request.entity");
+const enum_1 = require("../Common/enum");
 let VendorService = class VendorService {
     datasource;
-    constructor(datasource) {
+    vendorRepo;
+    vendorProfileRepo;
+    vendorCredentialsRepo;
+    vendorCreatedOfferRepo;
+    categoryRepo;
+    subCategoryRepo;
+    vendorRequestRepo;
+    constructor(datasource, vendorRepo, vendorProfileRepo, vendorCredentialsRepo, vendorCreatedOfferRepo, categoryRepo, subCategoryRepo, vendorRequestRepo) {
         this.datasource = datasource;
+        this.vendorRepo = vendorRepo;
+        this.vendorProfileRepo = vendorProfileRepo;
+        this.vendorCredentialsRepo = vendorCredentialsRepo;
+        this.vendorCreatedOfferRepo = vendorCreatedOfferRepo;
+        this.categoryRepo = categoryRepo;
+        this.subCategoryRepo = subCategoryRepo;
+        this.vendorRequestRepo = vendorRequestRepo;
     }
     async createVendor(vendorData) {
         const queryText = `
@@ -64,6 +86,38 @@ let VendorService = class VendorService {
             throw new Error('Failed to fetch vendor details: ' + error.message);
         }
     }
+    async updateVendorDetailsById(vendor_id, vendorData) {
+        const queryText = `
+      INSERT INTO "public"."Vendor" (admin_id, name, email, address, business_name, mobile_phone, status)
+      VALUES (
+          (SELECT "id" FROM "public"."Admin" WHERE username = $1), -- Parameter for adminUsername
+          $2, -- Parameter for name
+          $3, -- Parameter for email
+          $4, -- Parameter for address
+          $5, -- Parameter for business_name
+          $6, -- Parameter for mobile_phone
+          $7  -- Parameter for status
+      )
+      RETURNING id,'; -- Optional: return the ID of the newly inserted vendor
+    `;
+        const queryParams = [
+            vendorData.admin_id,
+            vendorData.name,
+            vendorData.email,
+            vendorData.address,
+            vendorData.business_name,
+            vendorData.mobile_phone,
+            vendorData.status,
+        ];
+        try {
+            const result = await this.datasource.query(queryText, queryParams);
+            return result;
+        }
+        catch (error) {
+            console.error('Error creating vendor:', error.message);
+            throw new Error('Failed to create vendor: ' + error.message);
+        }
+    }
     findAll() {
         return `This action returns all vendor`;
     }
@@ -85,11 +139,49 @@ let VendorService = class VendorService {
             return error;
         }
     }
+    async createVendorRequest(dto, vendorId) {
+        const tableMap = {
+            'vendor_registration': 'Vendor',
+            'vendor_update': 'Vendor',
+            'profile_create': 'VENDOR_PROFILE',
+            'profile_update': 'PROFILE_PROFILE',
+            'offer_create': 'VENDOR_CREATED_OFFER',
+            'offer_update': 'VENDOR_CREATED_OFFER',
+            'offer_delete': 'VENDOR_CREATED_OFFER',
+            'update_crtedentials': "VENDOR_CREDENTIALS"
+        };
+        const targettable = tableMap[dto.request_type];
+        const request = this.vendorRequestRepo.create({
+            ...(vendorId && dto.request_type !== 'vendor_registration'
+                ? { vendor: { id: vendorId } }
+                : {}),
+            request_type: dto.request_type,
+            target_table: targettable,
+            target_id: dto.target_id,
+            payload: dto.payload,
+            status: enum_1.RequestStatusEnum.PENDING,
+        });
+        return await this.vendorRequestRepo.save(request);
+    }
 };
 exports.VendorService = VendorService;
 exports.VendorService = VendorService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_2.InjectDataSource)()),
-    __metadata("design:paramtypes", [typeorm_1.DataSource])
+    __param(1, (0, typeorm_2.InjectRepository)(vendor_entity_1.Vendor)),
+    __param(2, (0, typeorm_2.InjectRepository)(vendor_profile_entity_1.VendorProfile)),
+    __param(3, (0, typeorm_2.InjectRepository)(vendor_credentials_entity_1.VendorCredentials)),
+    __param(4, (0, typeorm_2.InjectRepository)(vendor_created_offer_entity_1.VendorCreatedOffer)),
+    __param(5, (0, typeorm_2.InjectRepository)(category_entity_1.Category)),
+    __param(6, (0, typeorm_2.InjectRepository)(sub_category_entity_1.SubCategory)),
+    __param(7, (0, typeorm_2.InjectRepository)(request_entity_1.Request)),
+    __metadata("design:paramtypes", [typeorm_1.DataSource,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
+        typeorm_1.Repository,
+        typeorm_1.Repository])
 ], VendorService);
 //# sourceMappingURL=vendor.service.js.map

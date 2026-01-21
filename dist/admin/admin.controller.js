@@ -25,11 +25,20 @@ let AdminController = class AdminController {
     create(createAdminDto) {
         return this.adminService.create(createAdminDto);
     }
+    ReviewRequest(createAdminDto) {
+        return this.adminService.create(createAdminDto);
+    }
     findAll() {
         return this.adminService.GetVendorList();
     }
+    getAllRequests() {
+        return this.adminService.getAllRequests();
+    }
+    approve(id, updateAdminDto) {
+        return this.adminService.approveRequest(id, updateAdminDto.adminId);
+    }
     findOne(id) {
-        return this.adminService.findOne(+id);
+        return this.adminService.getVendorById(id);
     }
     update(id, updateAdminDto) {
         return this.adminService.update(+id, updateAdminDto);
@@ -47,16 +56,37 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "create", null);
 __decorate([
+    (0, common_1.Post)('/ReviewRequest'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_admin_dto_1.CreateAdminDto]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "ReviewRequest", null);
+__decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('requestList'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getAllRequests", null);
+__decorate([
+    (0, common_1.Patch)(':id/approve'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, update_admin_dto_1.UpdateAdminDto]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "approve", null);
+__decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "findOne", null);
 __decorate([

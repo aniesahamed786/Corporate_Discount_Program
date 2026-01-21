@@ -6,6 +6,7 @@ import { VendorModule } from './vendor/vendor.module';
 import { UserModule } from './user/user.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 
 @Module({
@@ -21,7 +22,8 @@ import { AuthenticationModule } from './authentication/authentication.module';
         rejectUnauthorized:false
        },
        autoLoadEntities:true,
-       synchronize:false
+       synchronize:false,
+       namingStrategy: new SnakeNamingStrategy(), 
     }),
     VendorModule,
     AdminModule,

@@ -15,6 +15,7 @@ const vendor_module_1 = require("./vendor/vendor.module");
 const user_module_1 = require("./user/user.module");
 const admin_module_1 = require("./admin/admin.module");
 const authentication_module_1 = require("./authentication/authentication.module");
+const typeorm_naming_strategies_1 = require("typeorm-naming-strategies");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -32,7 +33,8 @@ exports.AppModule = AppModule = __decorate([
                     rejectUnauthorized: false
                 },
                 autoLoadEntities: true,
-                synchronize: false
+                synchronize: false,
+                namingStrategy: new typeorm_naming_strategies_1.SnakeNamingStrategy(),
             }),
             vendor_module_1.VendorModule,
             admin_module_1.AdminModule,

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { VendorService } from './vendor.service';
 import { CreateVendorDto } from './dto/create-vendor.dto';
 import { UpdateVendorDto } from './dto/update-vendor.dto';
+import { CreateRequestDto } from './dto/createRequest.dto';
 
 @Controller('vendor')
 export class VendorController {
@@ -12,6 +13,10 @@ export class VendorController {
     return this.vendorService.createVendor(createVendorDto);
   }
 
+   @Post('request')
+  createVendorRequest(@Body() createRequest: CreateRequestDto) {
+    return this.vendorService.createVendorRequest(createRequest);
+  }
   @Get()
   findAll() {
     return this.vendorService.findAll();
@@ -23,8 +28,8 @@ export class VendorController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVendorDto: UpdateVendorDto) {
-    return this.vendorService.update(+id, updateVendorDto);
+  update(@Param('id') id: number, @Body() updateVendorDto: UpdateVendorDto) {
+    return this.vendorService.updateVendorDetailsById(id, updateVendorDto);
   }
 
   @Delete(':id')

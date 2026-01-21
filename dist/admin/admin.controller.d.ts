@@ -5,8 +5,11 @@ export declare class AdminController {
     private readonly adminService;
     constructor(adminService: AdminService);
     create(createAdminDto: CreateAdminDto): string;
+    ReviewRequest(createAdminDto: CreateAdminDto): string;
     findAll(): Promise<any>;
-    findOne(id: string): string;
+    getAllRequests(): Promise<import("../vendor/entities/request.entity").Request[]>;
+    approve(id: number, updateAdminDto: UpdateAdminDto): Promise<void>;
+    findOne(id: number): Promise<any>;
     update(id: string, updateAdminDto: UpdateAdminDto): string;
     remove(id: string): string;
 }
