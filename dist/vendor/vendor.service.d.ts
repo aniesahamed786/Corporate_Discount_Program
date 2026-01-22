@@ -27,5 +27,10 @@ export declare class VendorService {
     update(id: number, updateVendorDto: UpdateVendorDto): string;
     remove(id: number): string;
     createNewVendor(vendorDetails: CreateVendorDto): Promise<any>;
-    createVendorRequest(dto: CreateRequestDto, vendorId?: number): Promise<Request>;
+    createVendorRequest(dto: CreateRequestDto): Promise<Request>;
+    getApprovedOffers(): Promise<{
+        success: boolean;
+        count: number;
+        data: VendorCreatedOffer[];
+    }>;
 }

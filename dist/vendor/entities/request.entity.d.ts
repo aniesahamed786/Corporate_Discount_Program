@@ -3,9 +3,10 @@ import { RequestStatusEnum, RequestTypeEnum } from '../../Common/enum';
 export declare class Request {
     request_id: number;
     vendor?: Vendor;
+    vendor_id: number | null;
     request_type: RequestTypeEnum;
     target_table: string;
-    target_id: number;
+    target_id: number | null;
     payload: any;
     status: RequestStatusEnum;
     admin_comment: string;

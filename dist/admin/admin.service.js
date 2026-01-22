@@ -111,7 +111,7 @@ let AdminService = class AdminService {
         return request;
     }
     async approveRequest(request_id, AdminId) {
-        const request = await this.requestRepo.findOne({ where: { request_id: request_id } });
+        const request = await this.requestRepo.findOne({ where: { request_id: request_id }, relations: ['vendor'], });
         if (!request) {
             throw new common_1.NotFoundException('Request id not found' + `${request_id}`);
         }
@@ -147,8 +147,11 @@ let AdminService = class AdminService {
                     break;
                 }
                 case 'profile_create': {
+                    if (!request.vendor?.id) {
+                        throw new common_1.BadRequestException('Vendor not linked to request');
+                    }
                     const profile = this.vendorProfileRepo.create({
-                        vendor: { id: request.vendor?.id },
+                        vendor: { id: request.vendor_id },
                         profile_image_url: payload.profile_image_url,
                         dob: payload.dob,
                     });
@@ -162,6 +165,7 @@ let AdminService = class AdminService {
                     break;
                 }
                 case 'offer_create': {
+                    await manager.update(request_entity_1.Request, request_id, { vendor: { id: request.target_id, status: enum_1.VendorRegistrationStatus.APPROVED }, });
                     const offer = this.vendorCreatedOfferRepo.create({
                         vendor: { id: request.vendor?.id },
                         title: payload.title,

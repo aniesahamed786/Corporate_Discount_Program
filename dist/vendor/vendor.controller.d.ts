@@ -10,5 +10,10 @@ export declare class VendorController {
     findAll(): string;
     getVendorDetailsById(id: number): Promise<any>;
     update(id: number, updateVendorDto: UpdateVendorDto): Promise<any>;
+    getApprovedOffers(): Promise<{
+        success: boolean;
+        count: number;
+        data: import("./entities/vendor-created-offer.entity").VendorCreatedOffer[];
+    }>;
     remove(id: string): string;
 }

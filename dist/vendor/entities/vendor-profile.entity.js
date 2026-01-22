@@ -15,6 +15,7 @@ const vendor_entity_1 = require("./vendor.entity");
 let VendorProfile = class VendorProfile {
     id;
     vendor;
+    vendor_id;
     profile_image_url;
     dob;
 };
@@ -24,9 +25,17 @@ __decorate([
     __metadata("design:type", Number)
 ], VendorProfile.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => vendor_entity_1.Vendor, vendor => vendor.profile, { onDelete: 'CASCADE' }),
+    (0, typeorm_1.ManyToOne)(() => vendor_entity_1.Vendor, vendor => vendor.profile, {
+        onDelete: 'CASCADE',
+        nullable: false,
+    }),
+    (0, typeorm_1.JoinColumn)({ name: 'vendor_id' }),
     __metadata("design:type", vendor_entity_1.Vendor)
 ], VendorProfile.prototype, "vendor", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: false }),
+    __metadata("design:type", Number)
+], VendorProfile.prototype, "vendor_id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

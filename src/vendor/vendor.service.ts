@@ -11,7 +11,7 @@ import { Category } from './entities/category.entity';
 import { SubCategory } from './entities/sub-category.entity';
 import { CreateRequestDto } from './dto/createRequest.dto';
 import { Request } from './entities/request.entity'
-import { RequestStatusEnum } from 'src/Common/enum';
+import { RequestStatusEnum, VendorOfferCreationStatus } from 'src/Common/enum';
 
 @Injectable()
 export class VendorService {
@@ -148,6 +148,7 @@ export class VendorService {
   remove(id: number) {
     return `This action removes a #${id} vendor`;
   }
+
    async createNewVendor(vendorDetails:CreateVendorDto){
     try{
          const result =  await this.datasource.query('SELECT * FROM "public"."Admin"');
@@ -159,8 +160,7 @@ export class VendorService {
  
   }
 
-
-  async createVendorRequest(dto:CreateRequestDto,vendorId?:number){
+  async createVendorRequest(dto:CreateRequestDto){
     const tableMap = {
       'vendor_registration': 'Vendor',
       'vendor_update': 'Vendor',
@@ -173,12 +173,9 @@ export class VendorService {
     }
 
     const targettable = tableMap[dto.request_type];
+    const vendorId = dto.target_id || null;
    const request = this.vendorRequestRepo.create({
-
-    ...(vendorId && dto.request_type !== 'vendor_registration'
-      ? { vendor: { id: vendorId } }
-      : {}),
-
+    vendor_id: dto.request_type !== 'vendor_registration' ? vendorId : null,
     request_type: dto.request_type,
 
     target_table: targettable,
@@ -193,5 +190,30 @@ export class VendorService {
 return await this.vendorRequestRepo.save(request);
 
   }
+
+ async getApprovedOffers() {
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const offers = await this.vendorCreatedOfferRepo
+    .createQueryBuilder('offer')
+    .leftJoinAndSelect('offer.vendor', 'vendor')
+    .leftJoinAndSelect('offer.categories', 'categories')
+    .leftJoinAndSelect('offer.subCategories', 'subCategories')
+    .where('offer.status = :status', {
+      status: VendorOfferCreationStatus.APPROVED,
+    })
+    .andWhere('offer.start_date <= :today', { today })
+    .andWhere('offer.end_date >= :today', { today })
+    .orderBy('offer.timestamp', 'DESC')
+    .getMany();
+
+  return {
+    success: true,
+    count: offers.length,
+    data: offers,
+  };
+}
+
 
 }

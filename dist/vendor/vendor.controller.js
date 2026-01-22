@@ -38,6 +38,9 @@ let VendorController = class VendorController {
     update(id, updateVendorDto) {
         return this.vendorService.updateVendorDetailsById(id, updateVendorDto);
     }
+    getApprovedOffers() {
+        return this.vendorService.getApprovedOffers();
+    }
     remove(id) {
         return this.vendorService.remove(+id);
     }
@@ -78,6 +81,12 @@ __decorate([
     __metadata("design:paramtypes", [Number, update_vendor_dto_1.UpdateVendorDto]),
     __metadata("design:returntype", void 0)
 ], VendorController.prototype, "update", null);
+__decorate([
+    (0, common_1.Get)('offers/approved'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], VendorController.prototype, "getApprovedOffers", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),

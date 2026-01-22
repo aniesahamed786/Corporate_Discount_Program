@@ -44,6 +44,7 @@ export class Vendor {
 
   @OneToMany(() => VendorProfile, profile => profile.vendor)
   profile: VendorProfile[];
+  
 
   @OneToMany(() => StoreLocation, location => location.vendor)
   locations: StoreLocation[];

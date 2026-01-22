@@ -32,6 +32,11 @@ export class VendorController {
     return this.vendorService.updateVendorDetailsById(id, updateVendorDto);
   }
 
+  @Get('offers/approved')
+  getApprovedOffers() {
+  return this.vendorService.getApprovedOffers();
+}
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.vendorService.remove(+id);

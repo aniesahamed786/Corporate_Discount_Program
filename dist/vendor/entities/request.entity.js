@@ -16,6 +16,7 @@ const enum_1 = require("../../Common/enum");
 let Request = class Request {
     request_id;
     vendor;
+    vendor_id;
     request_type;
     target_table;
     target_id;
@@ -32,13 +33,15 @@ __decorate([
 ], Request.prototype, "request_id", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => vendor_entity_1.Vendor, { nullable: true, onDelete: 'SET NULL' }),
+    (0, typeorm_1.JoinColumn)({ name: 'vendor_id' }),
     __metadata("design:type", vendor_entity_1.Vendor)
 ], Request.prototype, "vendor", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        type: 'enum',
-        enum: enum_1.RequestTypeEnum,
-    }),
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Object)
+], Request.prototype, "vendor_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'enum', enum: enum_1.RequestTypeEnum }),
     __metadata("design:type", String)
 ], Request.prototype, "request_type", void 0);
 __decorate([
@@ -46,8 +49,8 @@ __decorate([
     __metadata("design:type", String)
 ], Request.prototype, "target_table", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Number)
+    (0, typeorm_1.Column)({ type: 'int', nullable: true }),
+    __metadata("design:type", Object)
 ], Request.prototype, "target_id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'jsonb' }),

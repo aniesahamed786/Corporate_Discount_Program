@@ -139,7 +139,7 @@ let VendorService = class VendorService {
             return error;
         }
     }
-    async createVendorRequest(dto, vendorId) {
+    async createVendorRequest(dto) {
         const tableMap = {
             'vendor_registration': 'Vendor',
             'vendor_update': 'Vendor',
@@ -151,10 +151,9 @@ let VendorService = class VendorService {
             'update_crtedentials': "VENDOR_CREDENTIALS"
         };
         const targettable = tableMap[dto.request_type];
+        const vendorId = dto.target_id || null;
         const request = this.vendorRequestRepo.create({
-            ...(vendorId && dto.request_type !== 'vendor_registration'
-                ? { vendor: { id: vendorId } }
-                : {}),
+            vendor_id: dto.request_type !== 'vendor_registration' ? vendorId : null,
             request_type: dto.request_type,
             target_table: targettable,
             target_id: dto.target_id,
@@ -162,6 +161,26 @@ let VendorService = class VendorService {
             status: enum_1.RequestStatusEnum.PENDING,
         });
         return await this.vendorRequestRepo.save(request);
+    }
+    async getApprovedOffers() {
+        const today = new Date().toISOString().split('T')[0];
+        const offers = await this.vendorCreatedOfferRepo
+            .createQueryBuilder('offer')
+            .leftJoinAndSelect('offer.vendor', 'vendor')
+            .leftJoinAndSelect('offer.categories', 'categories')
+            .leftJoinAndSelect('offer.subCategories', 'subCategories')
+            .where('offer.status = :status', {
+            status: enum_1.VendorOfferCreationStatus.APPROVED,
+        })
+            .andWhere('offer.start_date <= :today', { today })
+            .andWhere('offer.end_date >= :today', { today })
+            .orderBy('offer.timestamp', 'DESC')
+            .getMany();
+        return {
+            success: true,
+            count: offers.length,
+            data: offers,
+        };
     }
 };
 exports.VendorService = VendorService;
