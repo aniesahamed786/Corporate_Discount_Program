@@ -15,5 +15,10 @@ export declare class VendorController {
         count: any;
         data: any;
     }>;
+    getVendorCreatedOffers(id: number): Promise<{
+        success: boolean;
+        count: any;
+        data: any;
+    }>;
     remove(id: string): string;
 }

@@ -171,6 +171,21 @@ let VendorService = class VendorService {
             data: result,
         };
     }
+    async getApprovedOffersByVendorId(vendorId) {
+        const queryText = `
+    SELECT *
+    FROM "VENDOR_CREATED_OFFER"
+    WHERE vendor_id = $1
+    AND status = 'approved'
+    ORDER BY timestamp DESC
+  `;
+        const result = await this.datasource.query(queryText, [vendorId]);
+        return {
+            success: true,
+            count: result.length,
+            data: result,
+        };
+    }
 };
 exports.VendorService = VendorService;
 exports.VendorService = VendorService = __decorate([

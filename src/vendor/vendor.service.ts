@@ -204,5 +204,25 @@ return await this.vendorRequestRepo.save(request);
   };
 }
 
+async getApprovedOffersByVendorId(vendorId: number) {
+
+  const queryText = `
+    SELECT *
+    FROM "VENDOR_CREATED_OFFER"
+    WHERE vendor_id = $1
+    AND status = 'approved'
+    ORDER BY timestamp DESC
+  `;
+
+  const result = await this.datasource.query(queryText, [vendorId]);
+
+  return {
+    success: true,
+    count: result.length,
+    data: result,
+  };
+}
+
+
 
 }

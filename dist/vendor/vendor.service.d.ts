@@ -33,4 +33,9 @@ export declare class VendorService {
         count: any;
         data: any;
     }>;
+    getApprovedOffersByVendorId(vendorId: number): Promise<{
+        success: boolean;
+        count: any;
+        data: any;
+    }>;
 }

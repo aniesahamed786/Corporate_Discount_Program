@@ -36,6 +36,11 @@ export class VendorController {
   getApprovedOffers() {
   return this.vendorService.getApprovedOffers();
 }
+@Get('offers/approved/:id')
+getVendorCreatedOffers(@Param('id') id: number) {
+  return this.vendorService.getApprovedOffersByVendorId(id);
+}
+
 
   @Delete(':id')
   remove(@Param('id') id: string) {

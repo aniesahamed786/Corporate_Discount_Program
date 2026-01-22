@@ -41,6 +41,9 @@ let VendorController = class VendorController {
     getApprovedOffers() {
         return this.vendorService.getApprovedOffers();
     }
+    getVendorCreatedOffers(id) {
+        return this.vendorService.getApprovedOffersByVendorId(id);
+    }
     remove(id) {
         return this.vendorService.remove(+id);
     }
@@ -87,6 +90,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], VendorController.prototype, "getApprovedOffers", null);
+__decorate([
+    (0, common_1.Get)('offers/approved/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], VendorController.prototype, "getVendorCreatedOffers", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
