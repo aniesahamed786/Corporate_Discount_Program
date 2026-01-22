@@ -24,7 +24,10 @@ __decorate([
     __metadata("design:type", Number)
 ], SubCategory.prototype, "sub_category_id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => category_entity_1.Category),
+    (0, typeorm_1.ManyToOne)(() => category_entity_1.Category, {
+        onDelete: 'CASCADE'
+    }),
+    (0, typeorm_1.JoinColumn)({ name: 'category_id' }),
     __metadata("design:type", category_entity_1.Category)
 ], SubCategory.prototype, "category", void 0);
 __decorate([

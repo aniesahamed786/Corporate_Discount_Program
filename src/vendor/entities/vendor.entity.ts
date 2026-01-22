@@ -1,10 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, ManyToMany, JoinTable } from 'typeorm';
 import { Admin } from '../../admin/entities/admin.entity';
 import { VendorRegistrationStatus } from '../../Common/enum';
 import { VendorCredentials } from './vendor-credentials.entity';
 import { VendorProfile } from './vendor-profile.entity';
 import { StoreLocation } from './store-location.entity';
 import { VendorCreatedOffer } from './vendor-created-offer.entity';
+import { SubCategory } from './sub-category.entity';
+import { Category } from './category.entity';
 
 @Entity('Vendor')
 export class Vendor {
@@ -51,4 +53,34 @@ export class Vendor {
 
   @OneToMany(() => VendorCreatedOffer, offer => offer.vendor)
   offers: VendorCreatedOffer[];
+
+
+//    @ManyToMany(() => Category)
+//   @JoinTable({
+//     name: 'VENDOR_OFFER_CATEGORY',
+//     joinColumn: {
+//       name: 'offer_id',
+//       referencedColumnName: 'offer_id'
+//     },
+//     inverseJoinColumn: {
+//       name: 'category_id',
+//       referencedColumnName: 'category_id'
+//     }
+//   })
+//   categories: Category[];
+
+//   // ✅ SUB CATEGORY JOIN TABLE MAPPING
+//   @ManyToMany(() => SubCategory)
+//   @JoinTable({
+//     name: 'VENDOR_OFFER_SUB_CATEGORY',
+//     joinColumn: {
+//       name: 'offer_id',
+//       referencedColumnName: 'offer_id'
+//     },
+//     inverseJoinColumn: {
+//       name: 'sub_category_id',
+//       referencedColumnName: 'sub_category_id'
+//     }
+//   })
+//   subCategories: SubCategory[];
 }

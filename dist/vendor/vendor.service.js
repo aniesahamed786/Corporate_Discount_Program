@@ -163,23 +163,12 @@ let VendorService = class VendorService {
         return await this.vendorRequestRepo.save(request);
     }
     async getApprovedOffers() {
-        const today = new Date().toISOString().split('T')[0];
-        const offers = await this.vendorCreatedOfferRepo
-            .createQueryBuilder('offer')
-            .leftJoinAndSelect('offer.vendor', 'vendor')
-            .leftJoinAndSelect('offer.categories', 'categories')
-            .leftJoinAndSelect('offer.subCategories', 'subCategories')
-            .where('offer.status = :status', {
-            status: enum_1.VendorOfferCreationStatus.APPROVED,
-        })
-            .andWhere('offer.start_date <= :today', { today })
-            .andWhere('offer.end_date >= :today', { today })
-            .orderBy('offer.timestamp', 'DESC')
-            .getMany();
+        const queryText = `SELECT * FROM "public"."VENDOR_CREATED_OFFER"`;
+        const result = await this.datasource.query(queryText);
         return {
             success: true,
-            count: offers.length,
-            data: offers,
+            count: result.length,
+            data: result,
         };
     }
 };

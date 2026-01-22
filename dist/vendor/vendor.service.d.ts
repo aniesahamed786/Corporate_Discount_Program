@@ -30,7 +30,7 @@ export declare class VendorService {
     createVendorRequest(dto: CreateRequestDto): Promise<Request>;
     getApprovedOffers(): Promise<{
         success: boolean;
-        count: number;
-        data: VendorCreatedOffer[];
+        count: any;
+        data: any;
     }>;
 }

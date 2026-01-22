@@ -193,25 +193,14 @@ return await this.vendorRequestRepo.save(request);
 
  async getApprovedOffers() {
 
-  const today = new Date().toISOString().split('T')[0];
+   const queryText = `SELECT * FROM "public"."VENDOR_CREATED_OFFER"`;
 
-  const offers = await this.vendorCreatedOfferRepo
-    .createQueryBuilder('offer')
-    .leftJoinAndSelect('offer.vendor', 'vendor')
-    .leftJoinAndSelect('offer.categories', 'categories')
-    .leftJoinAndSelect('offer.subCategories', 'subCategories')
-    .where('offer.status = :status', {
-      status: VendorOfferCreationStatus.APPROVED,
-    })
-    .andWhere('offer.start_date <= :today', { today })
-    .andWhere('offer.end_date >= :today', { today })
-    .orderBy('offer.timestamp', 'DESC')
-    .getMany();
-
+      // Pass the vendor_id as a parameter
+  const result = await this.datasource.query(queryText);
   return {
     success: true,
-    count: offers.length,
-    data: offers,
+    count: result.length,
+    data: result,
   };
 }
 

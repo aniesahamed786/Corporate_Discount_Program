@@ -12,8 +12,8 @@ export declare class VendorController {
     update(id: number, updateVendorDto: UpdateVendorDto): Promise<any>;
     getApprovedOffers(): Promise<{
         success: boolean;
-        count: number;
-        data: import("./entities/vendor-created-offer.entity").VendorCreatedOffer[];
+        count: any;
+        data: any;
     }>;
     remove(id: string): string;
 }
