@@ -20,13 +20,15 @@ const category_entity_1 = require("./entities/category.entity");
 const sub_category_entity_1 = require("./entities/sub-category.entity");
 const request_history_entity_1 = require("./entities/request-history.entity");
 const request_entity_1 = require("./entities/request.entity");
+const vendor_offer_category_entity_1 = require("./entities/vendor-offer-category.entity");
+const vendor_offer_sub_category_entity_1 = require("./entities/vendor-offer-sub-category.entity");
 let VendorModule = class VendorModule {
 };
 exports.VendorModule = VendorModule;
 exports.VendorModule = VendorModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([vendor_entity_1.Vendor, vendor_credentials_entity_1.VendorCredentials, vendor_created_offer_entity_1.VendorCreatedOffer, vendor_profile_entity_1.VendorProfile, store_location_entity_1.StoreLocation, sub_category_entity_1.SubCategory, category_entity_1.Category, request_history_entity_1.RequestHistory, request_entity_1.Request])
+            typeorm_1.TypeOrmModule.forFeature([vendor_entity_1.Vendor, vendor_credentials_entity_1.VendorCredentials, vendor_created_offer_entity_1.VendorCreatedOffer, vendor_profile_entity_1.VendorProfile, store_location_entity_1.StoreLocation, sub_category_entity_1.SubCategory, category_entity_1.Category, request_history_entity_1.RequestHistory, request_entity_1.Request, vendor_offer_category_entity_1.VendorOfferCategory, vendor_offer_sub_category_entity_1.VendorOfferSubCategory])
         ],
         controllers: [vendor_controller_1.VendorController],
         providers: [vendor_service_1.VendorService],

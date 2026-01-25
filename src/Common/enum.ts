@@ -34,7 +34,7 @@ export enum RequestTypeEnum {
   OFFER_DELETE = 'offer_delete'
 }
 export enum RequestTypesEnum {
-       CREATE = 'create',
+  CREATE = 'create',
   UPDATE = 'update',
   DELETE = 'delete',
 }

@@ -12,11 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubCategory = void 0;
 const typeorm_1 = require("typeorm");
 const category_entity_1 = require("./category.entity");
+const vendor_offer_sub_category_entity_1 = require("./vendor-offer-sub-category.entity");
 let SubCategory = class SubCategory {
     sub_category_id;
     category;
     name_en;
     name_ar;
+    vendorOfferSubCategories;
 };
 exports.SubCategory = SubCategory;
 __decorate([
@@ -24,8 +26,8 @@ __decorate([
     __metadata("design:type", Number)
 ], SubCategory.prototype, "sub_category_id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => category_entity_1.Category, {
-        onDelete: 'CASCADE'
+    (0, typeorm_1.ManyToOne)(() => category_entity_1.Category, category => category.subCategories, {
+        onDelete: 'CASCADE',
     }),
     (0, typeorm_1.JoinColumn)({ name: 'category_id' }),
     __metadata("design:type", category_entity_1.Category)
@@ -38,6 +40,10 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], SubCategory.prototype, "name_ar", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => vendor_offer_sub_category_entity_1.VendorOfferSubCategory, vosc => vosc.subCategory),
+    __metadata("design:type", Array)
+], SubCategory.prototype, "vendorOfferSubCategories", void 0);
 exports.SubCategory = SubCategory = __decorate([
     (0, typeorm_1.Entity)('SUB_CATEGORY')
 ], SubCategory);

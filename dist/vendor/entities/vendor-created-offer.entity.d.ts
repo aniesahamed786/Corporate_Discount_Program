@@ -1,7 +1,7 @@
 import { Vendor } from './vendor.entity';
 import { VendorOfferCreationStatus } from '../../Common/enum';
-import { Category } from './category.entity';
-import { SubCategory } from './sub-category.entity';
+import { VendorOfferCategory } from './vendor-offer-category.entity';
+import { VendorOfferSubCategory } from './vendor-offer-sub-category.entity';
 export declare class VendorCreatedOffer {
     offer_id: number;
     vendor: Vendor;
@@ -11,6 +11,6 @@ export declare class VendorCreatedOffer {
     start_date: Date;
     end_date: Date;
     timestamp: Date;
-    categories: Category[];
-    subCategories: SubCategory[];
+    offerCategories: VendorOfferCategory[];
+    offerSubCategories: VendorOfferSubCategory[];
 }

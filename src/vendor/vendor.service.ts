@@ -222,6 +222,28 @@ async getApprovedOffersByVendorId(vendorId: number) {
     data: result,
   };
 }
+// async getApprovedOffersByVendorId(vendorId: number) {
+
+//   const offers = await this.vendorCreatedOfferRepo.find({
+//     where: {
+//       vendor: { id: vendorId },
+//       status: VendorOfferCreationStatus.APPROVED,
+//     },
+//     relations: [
+//       'offerCategories',
+//       'offerCategories.category',
+//       'offerSubCategories',
+//       'offerSubCategories.subCategory'
+//     ]
+//   });
+
+//   return {
+//     success: true,
+//     count: offers.length,
+//     data: offers,
+//   };
+// }
+
 
 
 

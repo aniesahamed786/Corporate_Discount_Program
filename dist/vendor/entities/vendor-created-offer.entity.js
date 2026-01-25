@@ -13,8 +13,8 @@ exports.VendorCreatedOffer = void 0;
 const typeorm_1 = require("typeorm");
 const vendor_entity_1 = require("./vendor.entity");
 const enum_1 = require("../../Common/enum");
-const category_entity_1 = require("./category.entity");
-const sub_category_entity_1 = require("./sub-category.entity");
+const vendor_offer_category_entity_1 = require("./vendor-offer-category.entity");
+const vendor_offer_sub_category_entity_1 = require("./vendor-offer-sub-category.entity");
 let VendorCreatedOffer = class VendorCreatedOffer {
     offer_id;
     vendor;
@@ -24,8 +24,8 @@ let VendorCreatedOffer = class VendorCreatedOffer {
     start_date;
     end_date;
     timestamp;
-    categories;
-    subCategories;
+    offerCategories;
+    offerSubCategories;
 };
 exports.VendorCreatedOffer = VendorCreatedOffer;
 __decorate([
@@ -64,23 +64,13 @@ __decorate([
     __metadata("design:type", Date)
 ], VendorCreatedOffer.prototype, "timestamp", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => category_entity_1.Category),
-    (0, typeorm_1.JoinTable)({
-        name: 'VENDOR_OFFER_CATEGORY',
-        joinColumn: { name: 'offer_id' },
-        inverseJoinColumn: { name: 'category_id' },
-    }),
+    (0, typeorm_1.OneToMany)(() => vendor_offer_category_entity_1.VendorOfferCategory, voc => voc.offer),
     __metadata("design:type", Array)
-], VendorCreatedOffer.prototype, "categories", void 0);
+], VendorCreatedOffer.prototype, "offerCategories", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => sub_category_entity_1.SubCategory),
-    (0, typeorm_1.JoinTable)({
-        name: 'VENDOR_OFFER_SUB_CATEGORY',
-        joinColumn: { name: 'offer_id' },
-        inverseJoinColumn: { name: 'sub_category_id' },
-    }),
+    (0, typeorm_1.OneToMany)(() => vendor_offer_sub_category_entity_1.VendorOfferSubCategory, vosc => vosc.offer),
     __metadata("design:type", Array)
-], VendorCreatedOffer.prototype, "subCategories", void 0);
+], VendorCreatedOffer.prototype, "offerSubCategories", void 0);
 exports.VendorCreatedOffer = VendorCreatedOffer = __decorate([
     (0, typeorm_1.Entity)('VENDOR_CREATED_OFFER')
 ], VendorCreatedOffer);

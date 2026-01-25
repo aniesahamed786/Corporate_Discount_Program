@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Category } from './category.entity';
+import { VendorOfferSubCategory } from './vendor-offer-sub-category.entity';
 
 // @Entity('SUB_CATEGORY')
 // export class SubCategory {
@@ -34,16 +35,36 @@ import { Category } from './category.entity';
 //   name_ar: string;
 // }
 
+// @Entity('SUB_CATEGORY')
+// export class SubCategory {
+
+//   @PrimaryGeneratedColumn()
+//   sub_category_id: number;
+
+//   @ManyToOne(() => Category, {
+//     onDelete: 'CASCADE'
+//   })
+//   @JoinColumn({ name: 'category_id' }) // matches DB column
+//   category: Category;
+
+//   @Column()
+//   name_en: string;
+
+//   @Column()
+//   name_ar: string;
+// }
+
+
 @Entity('SUB_CATEGORY')
 export class SubCategory {
 
   @PrimaryGeneratedColumn()
   sub_category_id: number;
 
-  @ManyToOne(() => Category, {
-    onDelete: 'CASCADE'
+  @ManyToOne(() => Category, category => category.subCategories, {
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'category_id' }) // matches DB column
+  @JoinColumn({ name: 'category_id' })
   category: Category;
 
   @Column()
@@ -51,4 +72,7 @@ export class SubCategory {
 
   @Column()
   name_ar: string;
+
+  @OneToMany(() => VendorOfferSubCategory, vosc => vosc.subCategory)
+  vendorOfferSubCategories: VendorOfferSubCategory[];
 }

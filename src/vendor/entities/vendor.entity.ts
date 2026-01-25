@@ -84,3 +84,4 @@ export class Vendor {
 //   })
 //   subCategories: SubCategory[];
 }
+ 
