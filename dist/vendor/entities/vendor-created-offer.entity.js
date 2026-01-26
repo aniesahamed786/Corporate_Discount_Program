@@ -26,6 +26,7 @@ let VendorCreatedOffer = class VendorCreatedOffer {
     timestamp;
     offerCategories;
     offerSubCategories;
+    offer_image;
 };
 exports.VendorCreatedOffer = VendorCreatedOffer;
 __decorate([
@@ -71,6 +72,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => vendor_offer_sub_category_entity_1.VendorOfferSubCategory, vosc => vosc.offer),
     __metadata("design:type", Array)
 ], VendorCreatedOffer.prototype, "offerSubCategories", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], VendorCreatedOffer.prototype, "offer_image", void 0);
 exports.VendorCreatedOffer = VendorCreatedOffer = __decorate([
     (0, typeorm_1.Entity)('VENDOR_CREATED_OFFER')
 ], VendorCreatedOffer);

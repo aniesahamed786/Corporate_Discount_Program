@@ -166,6 +166,14 @@ let AdminService = class AdminService {
                 }
                 case 'offer_create': {
                     await manager.update(request_entity_1.Request, request_id, { vendor: { id: request.target_id, status: enum_1.VendorRegistrationStatus.APPROVED }, });
+                    const categories = await this.categoryRepo.find({
+                        where: { category_id: (0, typeorm_1.In)(payload.categories) },
+                    });
+                    if (categories.length !== payload.categories.length) {
+                        const foundCategoryIds = categories.map(cat => cat.category_id);
+                        const missingCategoryIds = payload.categories.filter(id => !foundCategoryIds.includes(id));
+                        throw new common_1.NotFoundException(`Categories with IDs ${missingCategoryIds.join(', ')} not found.`);
+                    }
                     const offer = this.vendorCreatedOfferRepo.create({
                         vendor: { id: request.vendor?.id },
                         title: payload.title,
@@ -173,8 +181,20 @@ let AdminService = class AdminService {
                         start_date: payload.start_date,
                         end_date: payload.end_date,
                         status: enum_1.VendorOfferCreationStatus.APPROVED,
+                        offer_image: request.payload.offer_image
                     });
                     await manager.save(offer);
+                    if (payload.categories > 0) {
+                        const insertPromises = payload.categories.map(async (catId) => {
+                            const queryText = `
+              INSERT INTO "public"."VENDOR_OFFER_CATEGORY" (offer_id, category_id)
+              VALUES ($1, $2)
+              ON CONFLICT (offer_id, category_id) DO NOTHING;
+            `;
+                            await this.datasource.query(queryText, [offer.offer_id, catId]);
+                        });
+                        await Promise.all(insertPromises);
+                    }
                     break;
                 }
                 case 'offer_update': {

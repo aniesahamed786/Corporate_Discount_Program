@@ -161,6 +161,7 @@ export class VendorService {
   }
 
   async createVendorRequest(dto:CreateRequestDto){
+     
     const tableMap = {
       'vendor_registration': 'Vendor',
       'vendor_update': 'Vendor',
@@ -244,7 +245,18 @@ async getApprovedOffersByVendorId(vendorId: number) {
 //   };
 // }
 
+async getOfferCategoryList(){
+      const queryText = `
+  SELECT * FROM "public"."CATEGORY";`;
 
+  const result = await this.datasource.query(queryText);
+
+  return {
+    success: true,
+    count: result.length,
+    data: result,
+  };
+}
 
 
 }

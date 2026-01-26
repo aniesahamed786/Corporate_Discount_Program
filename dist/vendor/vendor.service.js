@@ -186,6 +186,16 @@ let VendorService = class VendorService {
             data: result,
         };
     }
+    async getOfferCategoryList() {
+        const queryText = `
+  SELECT * FROM "public"."CATEGORY";`;
+        const result = await this.datasource.query(queryText);
+        return {
+            success: true,
+            count: result.length,
+            data: result,
+        };
+    }
 };
 exports.VendorService = VendorService;
 exports.VendorService = VendorService = __decorate([

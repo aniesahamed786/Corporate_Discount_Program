@@ -43,6 +43,9 @@ export class VendorCreatedOffer {
   @OneToMany(() => VendorOfferSubCategory, vosc => vosc.offer)
   offerSubCategories: VendorOfferSubCategory[];
 
+   
+  @Column({ nullable: true })
+  offer_image: string;
 //   @ManyToMany(() => Category)
 //   @JoinTable({
 //     name: 'VENDOR_OFFER_CATEGORY',

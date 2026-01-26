@@ -13,4 +13,5 @@ export declare class VendorCreatedOffer {
     timestamp: Date;
     offerCategories: VendorOfferCategory[];
     offerSubCategories: VendorOfferSubCategory[];
+    offer_image: string;
 }

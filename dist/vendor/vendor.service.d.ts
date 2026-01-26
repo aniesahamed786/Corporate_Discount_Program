@@ -38,4 +38,9 @@ export declare class VendorService {
         count: any;
         data: any;
     }>;
+    getOfferCategoryList(): Promise<{
+        success: boolean;
+        count: any;
+        data: any;
+    }>;
 }

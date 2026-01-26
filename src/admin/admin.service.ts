@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Request } from '../vendor/entities/request.entity'
 import { RequestStatusEnum, VendorOfferCreationStatus, VendorRegistrationStatus } from 'src/Common/enum';
@@ -122,6 +122,7 @@ export class AdminService {
           if (!request.vendor?.id) {
             throw new BadRequestException('Vendor not linked to request');
           }
+          
           const profile = this.vendorProfileRepo.create({
             vendor:{ id:request.vendor_id} as any,
             profile_image_url: payload.profile_image_url,
@@ -133,7 +134,7 @@ export class AdminService {
           break;
         
         }
-
+        
         case 'profile_update': {
           await manager.update(VendorProfile, request.target_id, {
             ...payload,
@@ -143,6 +144,17 @@ export class AdminService {
 
         case 'offer_create': {
           await manager.update(Request, request_id, { vendor: { id:request.target_id , status: VendorRegistrationStatus.APPROVED} as any,});
+           const categories = await this.categoryRepo.find({
+        where: { category_id: In(payload.categories) },
+      });
+
+      if (categories.length !== payload.categories.length) {
+        const foundCategoryIds = categories.map(cat => cat.category_id);
+        const missingCategoryIds = payload.categories.filter(id => !foundCategoryIds.includes(id));
+        throw new NotFoundException(`Categories with IDs ${missingCategoryIds.join(', ')} not found.`);
+      }
+
+
           const offer = this.vendorCreatedOfferRepo.create({
             vendor: { id: request.vendor?.id },
             title: payload.title,
@@ -150,9 +162,23 @@ export class AdminService {
             start_date: payload.start_date,
             end_date: payload.end_date,
             status: VendorOfferCreationStatus.APPROVED,
+            offer_image:request.payload.offer_image
           });
 
           await manager.save(offer);
+
+          if (payload.categories > 0) {
+          const insertPromises = payload.categories.map(async (catId:any) => {
+            const queryText = `
+              INSERT INTO "public"."VENDOR_OFFER_CATEGORY" (offer_id, category_id)
+              VALUES ($1, $2)
+              ON CONFLICT (offer_id, category_id) DO NOTHING;
+            `;
+            // Use the transactional EntityManager for the raw query
+            await this.datasource.query(queryText, [offer.offer_id, catId]);
+          });
+          await Promise.all(insertPromises);
+        }
           break;
         }
 

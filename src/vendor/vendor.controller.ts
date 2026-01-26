@@ -22,6 +22,12 @@ export class VendorController {
     return this.vendorService.findAll();
   }
 
+    @Get('offer/category')
+    getOfferCategory(){
+      return this.vendorService.getOfferCategoryList()
+    }
+  
+
   @Get(':id')
   getVendorDetailsById(@Param('id') id: number) {
     return this.vendorService.GetVendorDetails(id);

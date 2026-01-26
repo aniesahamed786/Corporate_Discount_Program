@@ -8,6 +8,11 @@ export declare class VendorController {
     createNewVendor(createVendorDto: CreateVendorDto): Promise<any>;
     createVendorRequest(createRequest: CreateRequestDto): Promise<import("./entities/request.entity").Request>;
     findAll(): string;
+    getOfferCategory(): Promise<{
+        success: boolean;
+        count: any;
+        data: any;
+    }>;
     getVendorDetailsById(id: number): Promise<any>;
     update(id: number, updateVendorDto: UpdateVendorDto): Promise<any>;
     getApprovedOffers(): Promise<{
